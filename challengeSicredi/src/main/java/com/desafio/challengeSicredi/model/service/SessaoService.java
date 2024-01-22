@@ -1,10 +1,13 @@
 package com.desafio.challengeSicredi.model.service;
 import com.desafio.challengeSicredi.infra.exceptions.NotFoundException;
 import com.desafio.challengeSicredi.infra.exceptions.NotOpenedSession;
+import com.desafio.challengeSicredi.model.dto.RelatorioVotosDto;
+import com.desafio.challengeSicredi.model.dto.RelatorioVotosSessao;
 import com.desafio.challengeSicredi.model.dto.SessaoDtoIn;
 import com.desafio.challengeSicredi.model.dto.SessaoDtoOut;
 import com.desafio.challengeSicredi.model.entity.Pauta;
 import com.desafio.challengeSicredi.model.entity.Sessao;
+import com.desafio.challengeSicredi.model.entity.Voto;
 import com.desafio.challengeSicredi.model.enums.StatusSessao;
 import com.desafio.challengeSicredi.model.repository.SessaoRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +19,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -52,6 +56,33 @@ public class SessaoService {
         return this.objectMapper.convertValue(
                 this.sessaoRepository.save(sessaoToSave),SessaoDtoOut.class);
 
+    }
+
+    public RelatorioVotosSessao relatorioVotosSessao(Integer idSessao) throws NotFoundException{
+
+        Sessao sessaoFinded = this.findById(idSessao);
+
+        List<Voto> votosSessao = sessaoFinded.getVotos();
+
+        List<RelatorioVotosDto> votosSessaoDto = votosSessao.stream().map(this::convertVotoToVotoDto).toList();
+
+        RelatorioVotosSessao relatorioVotosSessao = new RelatorioVotosSessao();
+        relatorioVotosSessao.setFinalSessao(sessaoFinded.getFinalDate());
+        relatorioVotosSessao.setIdSessao(sessaoFinded.getIdSessao());
+        relatorioVotosSessao.setQtdVotos(votosSessaoDto.size());
+        relatorioVotosSessao.setRelatorioVotosDto(votosSessaoDto);
+
+        return relatorioVotosSessao;
+
+    }
+    public RelatorioVotosDto convertVotoToVotoDto(Voto voto){
+        RelatorioVotosDto relatorioVotosDto = new RelatorioVotosDto();
+        relatorioVotosDto.setConteudoVoto(voto.getConteudoVoto());
+        relatorioVotosDto.setInfoVoto(voto.getInfoVoto());
+        relatorioVotosDto.setIdAssociado(voto.getAssociado().getIdAssociado());
+        relatorioVotosDto.setIdVoto(voto.getIdVoto());
+
+        return relatorioVotosDto;
     }
 
     private Timestamp parsedInicioDate(LocalDateTime inicioDate){

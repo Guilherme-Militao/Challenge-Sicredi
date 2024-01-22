@@ -2,6 +2,7 @@ package com.desafio.challengeSicredi.controller;
 
 import com.desafio.challengeSicredi.infra.docs.SessaoControllerDoc;
 import com.desafio.challengeSicredi.infra.exceptions.NotFoundException;
+import com.desafio.challengeSicredi.model.dto.RelatorioVotosSessao;
 import com.desafio.challengeSicredi.model.dto.SessaoDtoIn;
 import com.desafio.challengeSicredi.model.dto.SessaoDtoOut;
 import com.desafio.challengeSicredi.model.entity.Sessao;
@@ -32,6 +33,11 @@ public class SessaoController implements SessaoControllerDoc {
     public ResponseEntity<SessaoDtoOut> createSessao(@RequestBody @Valid SessaoDtoIn sessaoDtoIn,
                                                      @PathVariable ("idPauta") @Positive Integer idPauta)throws NotFoundException {
         return new ResponseEntity<>(this.sessaoService.createSessao(sessaoDtoIn, idPauta),HttpStatus.CREATED);
+    }
+
+    @GetMapping("{idSessao}")
+    public  ResponseEntity<RelatorioVotosSessao> findRelatorioSessao(@PathVariable("idSessao")Integer idSessao) throws NotFoundException{
+        return new ResponseEntity<>(this.sessaoService.relatorioVotosSessao(idSessao),HttpStatus.OK);
     }
 
 }
