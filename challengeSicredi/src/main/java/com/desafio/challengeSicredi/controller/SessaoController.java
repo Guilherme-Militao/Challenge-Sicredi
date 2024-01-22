@@ -12,6 +12,7 @@ import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,15 +30,16 @@ public class SessaoController implements SessaoControllerDoc {
         return new ResponseEntity<>(this.sessaoService.getAllSession(), HttpStatus.OK);
     }
     @Override
-    @PostMapping("/{idPauta}")
-    public ResponseEntity<SessaoDtoOut> createSessao(@RequestBody @Valid SessaoDtoIn sessaoDtoIn,
-                                                     @PathVariable ("idPauta") @Positive Integer idPauta)throws NotFoundException {
-        return new ResponseEntity<>(this.sessaoService.createSessao(sessaoDtoIn, idPauta),HttpStatus.CREATED);
-    }
-
     @GetMapping("{idSessao}")
     public  ResponseEntity<RelatorioVotosSessao> findRelatorioSessao(@PathVariable("idSessao")Integer idSessao) throws NotFoundException{
         return new ResponseEntity<>(this.sessaoService.relatorioVotosSessao(idSessao),HttpStatus.OK);
     }
+    @Override
+    @PostMapping("/{idPauta}")
+    public ResponseEntity<SessaoDtoOut> createSessao(@RequestBody @Valid SessaoDtoIn sessaoDtoIn,
+                                                     @PathVariable ("idPauta") Integer idPauta)throws NotFoundException {
+        return new ResponseEntity<>(this.sessaoService.createSessao(sessaoDtoIn, idPauta),HttpStatus.CREATED);
+    }
+
 
 }

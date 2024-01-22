@@ -1,6 +1,7 @@
 package com.desafio.challengeSicredi.infra.docs;
 
 import com.desafio.challengeSicredi.infra.exceptions.NotFoundException;
+import com.desafio.challengeSicredi.model.dto.RelatorioVotosSessao;
 import com.desafio.challengeSicredi.model.dto.SessaoDtoIn;
 import com.desafio.challengeSicredi.model.dto.SessaoDtoOut;
 import com.desafio.challengeSicredi.model.entity.Sessao;
@@ -29,6 +30,17 @@ public interface SessaoControllerDoc {
     )
     @GetMapping
     public ResponseEntity<List<Sessao>> getAllSession();
+
+    @Operation(summary = "Retorna um relatorio dos votos da sessao", description = "Devera retornar um relatorio dos votos da sessao")
+    @ApiResponses(
+            value = {
+                    @ApiResponse(responseCode = "200", description = "devera retornar o relatorio"),
+                    @ApiResponse(responseCode = "400", description = "Requisição inválida"),
+                    @ApiResponse(responseCode = "500", description = "Uma excessão foi gerada")
+            }
+    )
+    @GetMapping("{idSessao}")
+    public  ResponseEntity<RelatorioVotosSessao> findRelatorioSessao(@PathVariable("idSessao")Integer idSessao) throws NotFoundException;
 
     @Operation(summary = "Cria uma sessao",description = "Deve criar uma sessao")
     @ApiResponses(
